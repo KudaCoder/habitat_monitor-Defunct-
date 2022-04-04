@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, make_response
 
 from api.models import db, Reading, EnvironmentConfig
+from . import utils
 from comm import redis
 
 from datetime import datetime, time
@@ -48,7 +49,7 @@ def reading_find_by_period():
             return make_response(jsonify({"error": "Incorrect time format"}), 400)
             
     readings = Reading.find(period=f"{unit}={time}")
-    reading_dict = Reading.to_dict(readings)
+    reading_dict = utils.convert_readings_tz(Reading.to_dict(readings))
     return make_response(jsonify(reading_dict), 200)
     
 
@@ -59,7 +60,7 @@ def reading_find_by_range():
     d_to = range_data["dateTo"]
 
     readings = Reading.find(dateFrom=d_from, dateTo=d_to)
-    reading_dict = Reading.to_dict(readings)
+    reading_dict = utils.convert_readings_tz(Reading.to_dict(readings))
     return jsonify(reading_dict)
 
 

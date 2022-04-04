@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
+from datetime import datetime
 import requests
 import json
+import pytz
 import os
 
 load_dotenv()
@@ -37,3 +39,12 @@ def get_config():
 
 def new_config():
     return requests.get(f"{API_URL}/config/new/").json()
+
+# TODO: Convert this to use a locale for user
+def convert_readings_tz(readings):
+    for reading in readings:
+        tz = pytz.timezone("UTC")
+        utc_time = datetime.fromisoformat(reading["time"])
+        tz_time = tz.localize(utc_time)
+        reading["time"] = tz_time.astimezone(tz=pytz.timezone("Europe/London")).isoformat()
+    return readings
