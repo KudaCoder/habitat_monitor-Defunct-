@@ -33,6 +33,8 @@ def set_redis(key, obj):
 
 
 def update_redis(key, data):
+    r_data = None
+
     if key == "environment":
         r_data = data_env()
         for k, v in data.items():
@@ -43,4 +45,5 @@ def update_redis(key, data):
                     pass
                 setattr(r_data, k, v)
         
+    if r_data is not None:
         set_redis(key, r_data)
