@@ -44,6 +44,7 @@ class Reading(db.Model):
             _to = datetime.strptime(kwargs.get("dateTo"), "%Y-%m-%d").date() + timedelta(days=1)
             query = query.filter(Reading.time < _to)
         
+        query = query.order_by(Reading.time)
         return query
     
     @staticmethod
