@@ -11,9 +11,16 @@ class Environment:
     day_l_sp: Optional[float] = None
     night_h_sp: Optional[float] = None
     night_l_sp: Optional[float] = None
+    humidity_high_sp: Optional[float] = None
+    humidity_low_sp: Optional[float] = None
 
 
 @dataclass
 class Reading:
     temp: Optional[float] = None
     hum: Optional[float] = None
+
+
+@dataclass
+class Light:
+    turned_on: Optional[bool] = None
