@@ -47,6 +47,9 @@ class Reading(db.Model):
         query = query.order_by(Reading.time)
         return query
     
+    # TODO: This is a bit misleading as it converts the individual readings to dict
+    #       and then appends to a list which is returned.  Makes sense to do so 
+    #       but makes the localise timezone function a bit squiffy!
     @staticmethod
     def to_dict(queryset, *args, **kwargs):
         readings = [
