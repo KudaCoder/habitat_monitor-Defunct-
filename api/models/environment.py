@@ -17,6 +17,8 @@ class EnvironmentConfig(db.Model):
     day_l_sp = db.Column(db.Float, nullable=False)
     night_h_sp = db.Column(db.Float, nullable=False)
     night_l_sp = db.Column(db.Float, nullable=False)
+    humidity_high_sp = db.Column(db.Float, nullable=False)
+    humidity_low_sp = db.Column(db.Float, nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
 
     @staticmethod
@@ -31,9 +33,11 @@ class EnvironmentConfig(db.Model):
             day_l_sp=config.day_l_sp,
             night_h_sp=config.night_h_sp,
             night_l_sp=config.night_l_sp,
+            humidity_high_sp=config.humidity_high_sp,
+            humidity_low_sp=config.humidity_low_sp,
             created=config.created.isoformat(),
         ) 
-    
+
     @staticmethod
     def factory(**kwargs):
         env = EnvironmentConfig()
@@ -43,6 +47,8 @@ class EnvironmentConfig(db.Model):
         env.day_l_sp = kwargs.get("day_l_sp", os.environ.get("DAY_L_SP"))
         env.night_h_sp = kwargs.get("night_h_sp", os.environ.get("NIGHT_H_SP"))
         env.night_l_sp = kwargs.get("night_l_sp", os.environ.get("NIGHT_L_SP"))
+        env.humidity_high_sp = kwargs.get("humidity_high_sp", os.environ.get("HUMIDITY_HIGH_SP"))
+        env.humidity_low_sp = kwargs.get("humidity_low_sp", os.environ.get("HUMIDITY_LOW_SP"))
 
         db.session.add(env)
         db.session.commit()
