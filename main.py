@@ -4,6 +4,7 @@ from modules.monitor import Monitor
 from modules.buzzer import Buzzer
 from modules.display import LCD
 from modules.lights import Lights
+from modules.fans import Fans
 
 from comm.redis import get_redis
 from datetime import datetime, time
@@ -36,26 +37,34 @@ class HabitatMonitor:
 def run():
     print('Program is starting ... ')
 
-    monitor = Monitor()
-    monitor_process = Process(target=monitor.monitor_temp_hum)
-    monitor_process.start()
+    sub_processes = []
 
+    monitor = Monitor()
     lights = Lights()
-    lights.start_lights()
+    fans = Fans()
+    sub_processes.append(Process(target=monitor.monitor_temp_hum))
+    sub_processes.append(Process(target=lights.control))
+    sub_processes.append(Process(target=fans.control))
+    for p in sub_processes:
+        p.start()
 
     habitat = HabitatMonitor()
     try:
+        print("Habitat running...")
         habitat.display()
     except KeyboardInterrupt:
-        monitor_process.terminate()
-        monitor.destroy()
+        print("killing all processes...")
+        for p in sub_processes:
+            p.terminate()
 
+        monitor.destroy()
         lights.destroy()
-        
+        fans.destroy()        
         habitat.destroy()
+
+        print("Exiting...Goodbye!")
 
 
 if __name__ == '__main__':
-    run()
-    
 
+    run()
