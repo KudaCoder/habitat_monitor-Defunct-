@@ -8,7 +8,8 @@ class Buzzer:
         self.buzzer_pin = 13
         self.button_pin = 12
 
-        GPIO.setmode(GPIO.BOARD) 
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(False)
         GPIO.setup(self.buzzer_pin, GPIO.OUT)
         GPIO.setup(
             self.button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP
