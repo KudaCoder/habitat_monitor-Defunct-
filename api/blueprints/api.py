@@ -9,6 +9,7 @@ import json
 
 bp = Blueprint("api", __name__, url_prefix="/api")
 
+# TODO: Convert this to use FastAPI?!
 
 @bp.route("/reading/current/")
 def reading_current():
@@ -49,7 +50,7 @@ def reading_find_by_period():
             return make_response(jsonify({"error": "Incorrect time format"}), 400)
             
     readings = Reading.find(period=f"{unit}={time}")
-    reading_dict = utils.convert_readings_tz(Reading.to_dict(readings))
+    reading_dict = utils.localise_tz(Reading.to_dict(readings))
     return make_response(jsonify(reading_dict), 200)
     
 
@@ -58,16 +59,15 @@ def reading_find_by_range():
     range_data = json.loads(request.json)
     d_from = range_data["dateFrom"]
     d_to = range_data["dateTo"]
-
     readings = Reading.find(dateFrom=d_from, dateTo=d_to)
-    reading_dict = utils.convert_readings_tz(Reading.to_dict(readings))
+    reading_dict = utils.localise_tz(Reading.to_dict(readings))
     return jsonify(reading_dict)
 
 
 @bp.route("/config/get/")
 def config_get():
     env = EnvironmentConfig.query.order_by(EnvironmentConfig.created.desc()).first()
-    env_data = EnvironmentConfig.to_dict(env)
+    env_data = utils.localise_tz(EnvironmentConfig.to_dict(env))
     return jsonify(env_data)
 
 

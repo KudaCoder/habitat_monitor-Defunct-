@@ -41,10 +41,24 @@ def new_config():
     return requests.get(f"{API_URL}/config/new/").json()
 
 # TODO: Convert this to use a locale for user
-def convert_readings_tz(readings):
-    for reading in readings:
-        tz = pytz.timezone("UTC")
-        utc_time = datetime.fromisoformat(reading["time"])
-        tz_time = tz.localize(utc_time)
-        reading["time"] = tz_time.astimezone(tz=pytz.timezone("Europe/London")).isoformat()
-    return readings
+def localise_tz(data):
+    if isinstance(data, list):
+        for data_point in data:
+            data_point = perform_localise(data_point)
+    else:
+        data = perform_localise(data)
+    
+    return data
+
+def perform_localise(data):
+    for k, v in data.items():
+        if isinstance(v, str):
+            try:
+                tz = pytz.timezone("UTC")
+                utc_time = datetime.fromisoformat(v)
+                tz_time = tz.localize(utc_time)
+                data[k] = tz_time.astimezone(tz=pytz.timezone("Europe/London")).isoformat()
+            except Exception:
+                # Not an isoformat, just move on
+                pass
+    return data
